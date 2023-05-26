@@ -124,12 +124,14 @@
     async function exportGLB() {
       const modelViewer = document.getElementById("modelViewer");
       const gltf = await modelViewer.exportScene();
-      const file = new File([gltf], "export.glb");
+
+      // Crear un objeto Blob en lugar de File
+      const blob = new Blob([gltf], { type: 'application/octet-stream' });
 
       // Crear un enlace de descarga
-      const link = document.createElement("a");
-      link.download = file.name;
-      link.href = URL.createObjectURL(file);
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.download = 'export.glb';
 
       // Actualizar el valor del input con el enlace de descarga
       const enlaceInput = document.querySelector("#enlace");
