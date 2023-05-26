@@ -18,7 +18,7 @@
 
         <section>
             <model-viewer 
-            id="static-model"
+            id="modelViewer"
             src="models/buzo-capucha-v1.glb" 
             ar 
             alt="prueba con modelo" 
@@ -121,7 +121,7 @@
         </script>
         <script>
             async function exportGLB() {
-              const modelViewer = document.getElementById("static-model");
+              const modelViewer = document.getElementById("modelViewer");
               const gltf = await modelViewer.exportScene();
               const file = new File([gltf], "export.glb");
               const link = document.createElement("a");
