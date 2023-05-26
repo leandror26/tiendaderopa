@@ -120,7 +120,7 @@
             });
         </script>
         <script>
-           async function exportGLB() {
+     async function exportGLB() {
   const modelViewer = document.getElementById("modelViewer");
   const gltf = await modelViewer.exportScene();
   const file = new File([gltf], "export.glb");
@@ -129,13 +129,12 @@
   const link = document.createElement("a");
   link.download = file.name;
   link.href = URL.createObjectURL(file);
-  link.textContent = "Descargar archivo";
-
-  // Agregar el enlace a la página
-  const downloadContainer = document.getElementById("downloadContainer");
-  downloadContainer.innerHTML = ""; // Limpiar cualquier enlace anterior
-  downloadContainer.appendChild(link);
+  
+  // Agregar el enlace al input
+  const enlaceInput = document.querySelector("#enlace");
+  enlaceInput.value = link.href;
 }
+
           </script>
          
     </body>
