@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8"> 
+        <meta name="viewport">
+        <title>Diseñe su modelo</title>
+        <link rel="stylesheet" href="css/bootstrap.min.css" type="text/css">
+        <link rel="stylesheet" href="css/style.css" type="text/css">
+        <script type="text/javascript" src="js/jquery-3.6.0.min.js"></script>
+        <!--script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script-->
+        <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.0.1/model-viewer.min.js"></script>
+    </head>
+
+    <body>
+        <header>
+            <h1></h1>
+        </header>
+
+        <section>
+            <model-viewer 
+            id="static-model"
+            src="models/buzo-capucha-v1.glb" 
+            ar 
+            alt="prueba con modelo" 
+            ar-modes="webxr scene-viewer quick-look"
+            camera-controls 
+            poster="img/buzocapucha-v1.webp" 
+            seamless-poster 
+            shadow-intensity="1"
+            touch-action="pan-y" 
+            interaction-prompt="none"
+            enable-pan 
+            auto-rotate>
+            <div class="controls">
+                <button onclick="exportGLB()">Export GLB</button>
+              </div>
+            </model-viewer>
+           
+
+            <div class="controls" id="color-controls">
+                <button data-color="#ff0000">Red</button>
+                <button data-color="#00ff00">Green</button>
+                <button data-color="#0000ff">Blue</button>
+            </div>
+            <input type="text" value="" id="enlace">
+            <div class="texture" id="texture-controls">
+                <select id="select">
+                    <option value="img/texturanormal.png">Normal</option>
+                    <option value="img/texturaazul4k.png">Azul</option>
+                    <option value="img/texturaverde.png">Verde</option>
+                </select>
+            </div>
+
+            <script>
+                const modelViewer=document.querySelector('#modelViewer');
+    
+                document.querySelector('#color-controls').addEventListener('click', (event) => {
+                    const colorString = event.target.dataset.color;
+                    const [material] = modelViewer.model.materials;
+                    material.pbrMetallicRoughness.setBaseColorFactor(colorString);
+                });
+            </script>
+        </section>
+
+        <section class="pestañas">
+            <div class="tab-container">
+                <button class="tablinkboton1" onclick="" type="button">Modelos</button>
+                <div class="slides" id="slides">
+                    <button class="slide" onclick="switchSrc(this, 'buzo-capucha-v1')" style="background-image: url('img/buzo-capucha-v1.webp');" type="button"></button>
+                    <button class="slide" onclick="switchSrc(this, 'buzo')" style="background-image: url('img/buzo.webp');"></button>
+                    <button class="slide" onclick="switchSrc(this, 'buzoverde')" style="background-image: url('img/buzo.webp');"></button>
+                    <button class="slide" onclick="switchSrc(this, 'campera-capucha')" style="background-image: url('');"></button>
+                    <button class="slide" onclick="switchSrc(this, 'campera')" style="background-image: url('');"></button>
+                    <button class="slide" onclick="switchSrc(this, 'remera')" style="background-image: url('img/remera.webp');" type="button"></button>
+                    <button class="slide" onclick="switchSrc(this, 'chomba')" style="background-image: url('img/chomba.webp');" type="button"></button>
+                    <button class="slide" onclick="switchSrc(this, 'pantalon')" style="background-image: url('img/pantalon.webp');"></button>
+                    <button class="slide" onclick="switchSrc(this, 'babucha')" style="background-image: url('img/babucha.webp');"></button>
+                    <button class="slide" onclick="switchSrc(this, 'buzo-sin-capucha')" style="background-image: url('img/buzo-sin-capucha.webp');"></button>
+                </div>
+            </div>
+
+            <script type="module">
+                //const modelViewer = document.querySelector("model-viewer");
+                window.switchSrc = (element, name) => {
+                const base = "models/" + name;
+                const posterbase = "img/" + name;
+
+                modelViewer.src = base + '.glb';
+                modelViewer.poster = posterbase + '.webp';
+                const slides = document.querySelectorAll(".slide");
+                slides.forEach((element) => {element.classList.remove("selected");});
+                element.classList.add("selected");
+                };
+  
+                document.querySelector(".slider").addEventListener('beforexrselect', (ev) => {
+                // Keep slider interactions from affecting the XR scene.
+                ev.preventDefault();
+                });
+            </script>
+        </section>
+
+        <script type="module">
+            const modelViewerTexture = document.querySelector('#modelViewer');
+
+            modelViewerTexture.addEventListener("load", () => {
+                const material=modelViewerTexture.model.materials[0];
+                //const material=modelViewerTexture.model.materials.values().next().value;
+                const createAndApplyTexture = async (channel, event) => {
+                    if(event.target.value)
+                    {
+                        const texture = await
+                        modelViewerTexture.createTexture(event.target.value)
+                        material[channel].setTexture(texture);  
+                    }
+                }
+
+                document.querySelector('#select').addEventListener('input', (event) => {
+                createAndApplyTexture('normalTexture', event);
+                });
+            });
+        </script>
+        <script>
+            async function exportGLB() {
+              const modelViewer = document.getElementById("static-model");
+              const gltf = await modelViewer.exportScene();
+              const file = new File([gltf], "export.glb");
+              const link = document.createElement("a");
+              link.download =file.name;
+              link.href = URL.createObjectURL(file);
+              link.click();
+              //$("#enlace").val(link);
+              //console.log($("#enlace").val())
+              document.querySelector("#enlace").value = link.href;
+    console.log(document.querySelector("#enlace").value);
+            }
+          </script>
+         
+    </body>
+</html>
